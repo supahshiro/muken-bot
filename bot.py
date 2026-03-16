@@ -101,9 +101,25 @@ async def weakling(ctx, member: discord.Member):
 async def bankai(ctx, member: discord.Member):
     await ctx.send(f"⚔️ {member.mention} — BANKAI.")
 
+reiatsu_cooldowns = {}
+
 @bot.command()
-@commands.cooldown(1, 86400, commands.BucketType.user)
 async def reiatsu(ctx, member: discord.Member):
+    import time
+    now = time.time()
+    
+    # Check if target has been measured in the last 24 hours
+    if member.id in reiatsu_cooldowns:
+        elapsed = now - reiatsu_cooldowns[member.id]
+        if elapsed < 86400:
+            remaining = 86400 - elapsed
+            hours = int(remaining // 3600)
+            minutes = int((remaining % 3600) // 60)
+            await ctx.send(f"{member.mention}'s reiatsu has already been measured mongrel. Try again in {hours}h {minutes}m.")
+            return
+    
+    reiatsu_cooldowns[member.id] = now
+    
     role_names = [r.name.lower() for r in member.roles]
     admin_roles = ["head captain", "soul king", "shadow government"]
     mod_roles = ["vice lieutenant"]
@@ -132,17 +148,6 @@ async def reiatsu(ctx, member: discord.Member):
         else:
             comment = "Not terrible. But nowhere near captain level."
     await ctx.send(f"⚡ {member.mention}'s reiatsu level: **{level}/100** — {comment}")
-
-@reiatsu.error
-async def reiatsu_error(ctx, error):
-    if isinstance(error, commands.CommandOnCooldown):
-        hours = int(error.retry_after // 3600)
-        minutes = int((error.retry_after % 3600) // 60)
-        await ctx.send(f"{ctx.author.mention} — your reiatsu has already been measured mongrel. Try again in {hours}h {minutes}m.")
-
-
-
-
 
 
     
