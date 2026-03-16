@@ -102,20 +102,50 @@ async def bankai(ctx, member: discord.Member):
     await ctx.send(f"⚔️ {member.mention} — BANKAI.")
 
 @bot.command()
+@commands.cooldown(1, 86400, commands.BucketType.user)
 async def reiatsu(ctx, member: discord.Member):
-    level = random.randint(1, 100)
-    if level < 20:
-        comment = "Pathetic. A Hollow has more reiatsu than this."
-    elif level < 50:
-        comment = "Average at best. Not worth my time."
-    elif level < 80:
-        comment = "Respectable. But still nowhere near my level."
-    elif level < 100:
-        comment = "Impressive. You might actually be useful."
+    role_names = [r.name.lower() for r in member.roles]
+    admin_roles = ["head captain", "soul king", "shadow government"]
+    mod_roles = ["vice lieutenant"]
+    captain_roles = ["captain", "lieutenant"]
+    if member.guild_permissions.administrator or any(r in role_names for r in admin_roles):
+        level = random.randint(150, 999)
+        comment = "This reiatsu... it's incomprehensible. The very air bends around them!"
+    elif any(r in role_names for r in mod_roles):
+        level = random.randint(70, 120)
+        if level < 100:
+            comment = "A powerful reiatsu. Captain level at minimum."
+        else:
+            comment = "Impossible... this reiatsu is off the charts."
+    elif any(r in role_names for r in captain_roles):
+        level = random.randint(70, 100)
+        if level < 85:
+            comment = "Respectable. Vice Lieutenant level reiatsu."
+        else:
+            comment = "Impressive. This is captain level reiatsu."
     else:
-        comment = "Impossible... this reiatsu rivals my own."
+        level = random.randint(1, 69)
+        if level < 20:
+            comment = "Pathetic. A Hollow has more reiatsu than this."
+        elif level < 50:
+            comment = "Average at best. Not worth my time."
+        else:
+            comment = "Not terrible. But nowhere near captain level."
     await ctx.send(f"⚡ {member.mention}'s reiatsu level: **{level}/100** — {comment}")
 
+@reiatsu.error
+async def reiatsu_error(ctx, error):
+    if isinstance(error, commands.CommandOnCooldown):
+        hours = int(error.retry_after // 3600)
+        minutes = int((error.retry_after % 3600) // 60)
+        await ctx.send(f"{ctx.author.mention} — your reiatsu has already been measured mongrel. Try again in {hours}h {minutes}m.")
+
+
+
+
+
+
+    
 @bot.command()
 async def gimmick(ctx):
     await ctx.send("Watashi No Gimmick Society 😈")
