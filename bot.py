@@ -77,9 +77,25 @@ async def aizen(ctx):
     quote = random.choice(aizen_quotes)
     await ctx.send(f"*Aizen Sosuke:* \"{quote}\"")
 
+weakling_quotes = [
+    "admiration is the emotion furthest from understanding. You are beneath me.",
+    "You were never even worth the effort of defeating.",
+    "Did you really think you could challenge me? How disappointing.",
+    "I have not once considered you a threat. Not even for a moment.",
+    "You are nothing more than a stepping stone on my path to the heavens.",
+    "Your existence is so insignificant I almost forgot you were there.",
+    "Even your despair is boring to me.",
+    "You fought well. Unfortunately, well was never going to be enough.",
+    "I expected more from you. I was wrong to even expect that much.",
+    "ratio'd + no maidens + your reiatsu is mid + Aizen would never.",
+    "Everything has gone according to my plan. Including your failure.",
+]
+
 @bot.command()
 async def weakling(ctx, member: discord.Member):
-    await ctx.send(f"{member.mention} — admiration is the emotion furthest from understanding. You are beneath me.")
+    quote = random.choice(weakling_quotes)
+    await ctx.send(f"{member.mention} — {quote}")
+
 
 @bot.command()
 async def bankai(ctx, member: discord.Member):
